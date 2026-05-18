@@ -27,7 +27,7 @@ const StudentsManagement = () => {
   });
   const { data: statsData, isLoading: statsLoading, error: statsError } = useGetDashboardStats();
 
-  console.log("uganda",studentsData)
+  console.log("uganda", studentsData)
 
   console.log("stats", statsData?.stats)
   // Filtered and paginated students (if not handled by backend)
@@ -39,8 +39,7 @@ const StudentsManagement = () => {
     }
     if (searchTerm) {
       filtered = filtered.filter(s =>
-        s.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.email?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -75,113 +74,113 @@ const StudentsManagement = () => {
       </div>
 
       {/* Stats */}
-         {/* Stats */}
-         <div className="grid grid-cols-4 gap-4 px-6">
-      <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        {statsLoading ? (
-          <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
-          </div>
-        ) : (
-          <>
-            <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.assignedStudentsCount || "0"}</p>
-            <h3 className="text-sm font-medium text-gray-500">Assigned Students</h3>
-          </>
-        )}
-      </div>
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-4 px-6">
+        <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          {statsLoading ? (
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+            </div>
+          ) : (
+            <>
+              <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.assignedStudentsCount || "0"}</p>
+              <h3 className="text-sm font-medium text-gray-500">Assigned Students</h3>
+            </>
+          )}
+        </div>
 
-      <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        {statsLoading ? (
-          <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
-          </div>
-        ) : (
-          <>
-            <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.workshop || "0"}</p>
-            <h3 className="text-sm font-medium text-gray-500">Workshop  
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Icon
-                      icon="tdesign:info-circle-filled"
-                      className="w-4 h-4 text-gray-400 pt-1"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>Students currently in Workshop</TooltipContent>
-                </Tooltip>
-              </TooltipProvider></h3>
-          </>
-        )}
-      </div>
+        <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          {statsLoading ? (
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+            </div>
+          ) : (
+            <>
+              <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.workshop || "0"}</p>
+              <h3 className="text-sm font-medium text-gray-500">Workshop
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Icon
+                        icon="tdesign:info-circle-filled"
+                        className="w-4 h-4 text-gray-400 pt-1"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>Students currently in Workshop</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider></h3>
+            </>
+          )}
+        </div>
 
-      <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        {statsLoading ? (
-          <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
-          </div>
-        ) : (
-          <>
-            <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.normalProgress || "0"}</p>
-            <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1">
-              Normal Progress
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Icon
-                      icon="tdesign:info-circle-filled"
-                      className="w-4 h-4 text-gray-400 pt-1"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>Students currently in normal progress</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </h3>
-          </>
-        )}
-      </div>
+        <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          {statsLoading ? (
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+            </div>
+          ) : (
+            <>
+              <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.normalProgress || "0"}</p>
+              <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                Normal Progress
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Icon
+                        icon="tdesign:info-circle-filled"
+                        className="w-4 h-4 text-gray-400 pt-1"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>Students currently in normal progress</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </h3>
+            </>
+          )}
+        </div>
 
-      <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        {statsLoading ? (
-          <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
-          </div>
-        ) : (
-          <>
-            <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.underExamination || "0"}</p>
-            <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1">
-              Under Examination
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Icon
-                      icon="tdesign:info-circle-filled"
-                      className="w-4 h-4 text-gray-400 pt-1"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>Students currently under examination</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </h3>
-          </>
-        )}
+        <div className="bg-[#FDFDFE] border border-[#E5E7EB] p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          {statsLoading ? (
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-20 mx-auto mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+            </div>
+          ) : (
+            <>
+              <p className="mt-2 text-3xl font-semibold">{statsData?.stats?.underExamination || "0"}</p>
+              <h3 className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                Under Examination
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Icon
+                        icon="tdesign:info-circle-filled"
+                        className="w-4 h-4 text-gray-400 pt-1"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>Students currently under examination</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </h3>
+            </>
+          )}
+        </div>
       </div>
-    </div>
 
       {/* Tabs, Search, Page Size */}
       <div className="bg-white py-4 rounded-lg shadow-md mx-6 mb-4">
-       {/* Tabs */}
-       <StudentManagementTableTabs
+        {/* Tabs */}
+        <StudentManagementTableTabs
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           students={studentsData?.students || []}
         />
 
-           {/* Search Input & Page Size Dropdown */}
-           <div className="flex justify-between items-center my-4 px-4">
+        {/* Search Input & Page Size Dropdown */}
+        <div className="flex justify-between items-center my-4 px-4">
           {/* Search Input */}
           <div className="relative w-96">
             <Search
