@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { 
-  useGetStudentDocuments, 
-  useDownloadStudentDocument 
+import {
+  useGetStudentDocuments,
+  useDownloadStudentDocument
 } from '../../store/tanstackStore/services/queries';
 import { useSocket } from '../../hooks/useSocket';
 
@@ -36,17 +36,17 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
       onSuccess: (response) => {
         console.log('Download response:', response);
         console.log('Document item:', docItem);
-        
+
         // Get the blob data from the response
         const data = response.data;
-        
+
         // Use the original filename from the document record
         const filename = docItem.fileName || docItem.title || 'document';
-        
+
         console.log('Using filename:', filename);
         console.log('Data type:', typeof data);
         console.log('Data size:', data?.size || data?.length);
-        
+
         // Create blob with the correct content type
         const blob = new Blob([data], { type: 'application/octet-stream' });
         const url = window.URL.createObjectURL(blob);
@@ -101,10 +101,10 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
   };
 
   const filteredDocuments = documents?.filter(doc => {
-    const matchesFilter = filter === 'ALL' || 
-                         (filter === 'REVIEWED' ? doc.isReviewed : doc.type === filter);
+    const matchesFilter = filter === 'ALL' ||
+      (filter === 'REVIEWED' ? doc.isReviewed : doc.type === filter);
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doc.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      doc.description?.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   }) || [];
 
@@ -130,13 +130,13 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 className="text-lg font-medium text-gray-900">
-              Documents - {student.firstName} {student.lastName}
+              Documents - {student.fullName}
             </h2>
             <p className="text-sm text-gray-500 mt-1">
               {student.registrationNumber}
             </p>
           </div>
-          
+
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <input
@@ -180,7 +180,7 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">No documents found</h3>
             <p className="mt-1 text-sm text-gray-500">
-              {searchTerm || filter !== 'ALL' 
+              {searchTerm || filter !== 'ALL'
                 ? 'Try adjusting your search or filter criteria.'
                 : 'This student has not uploaded any documents yet.'
               }
@@ -194,7 +194,7 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
                 className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                 onClick={() => onDocumentSelect(document)}
               >
-                <div className="flex items-start justify-between">
+                <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-sm font-medium text-gray-900 truncate">
@@ -209,13 +209,13 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
                         </span>
                       )}
                     </div>
-                    
+
                     {document.description && (
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                         {document.description}
                       </p>
                     )}
-                    
+
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span>Uploaded: {format(new Date(document.uploadedAt), 'MMM dd, yyyy')}</span>
                       {document.uploadedBy && (
@@ -229,7 +229,7 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 ml-4">
                     <button
                       onClick={(e) => {
@@ -237,12 +237,13 @@ const StudentDocumentList = ({ student, onDocumentSelect }) => {
                         handleDownload(document);
                       }}
                       disabled={downloadMutation.isPending}
-                      className="p-3 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md transition-colors"
+                      className="p-3 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md transition-colors flex flex-row items-center gap-1 "
                       title="Download document"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
+                      Download
                     </button>
                     {!document.isReviewed && (
                       <button
