@@ -1,10 +1,12 @@
 import axios from 'axios'
 
 // export const BASE_API_URL = 'http://localhost:5000/api/v1';
-export const BASE_API_URL = 'https://drimsapi.umi.ac.ug/api/v1';
+// export const BASE_API_URL = 'https://drimsapi.umi.ac.ug/api/v1';
 
+export const BASE_API_URL = 'https://drimsapi.alero.digital/api/v1';
+export const socketUrl = "https://drimsapi.alero.digital"
 // export const socketUrl = "localhost:5000"
-export const socketUrl = "https://drimsapi.umi.ac.ug"
+// export const socketUrl = "https://drimsapi.umi.ac.ug"
 
 const apiRequest = axios.create({
     baseURL: BASE_API_URL,
@@ -23,8 +25,8 @@ apiRequest.interceptors.request.use((config) => {
     return config
 })
 
-apiRequest.interceptors.response.use((response)=> response, (error)=> {
-    if(error.response.status === 401){
+apiRequest.interceptors.response.use((response) => response, (error) => {
+    if (error.response.status === 401) {
         localStorage.removeItem("token")
         localStorage.removeItem("role")
         localStorage.removeItem("umi_auth_token")

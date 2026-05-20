@@ -7,7 +7,8 @@ import { useGetSupervisorProfile } from '../../store/tanstackStore/services/quer
 import { Icon } from '@iconify/react';
 
 // const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-const API_URL = import.meta.env.VITE_API_URL || 'https://drimsapi.umi.ac.ug/api/v1';
+// const API_URL = import.meta.env.VITE_API_URL || 'https://drimsapi.umi.ac.ug/api/v1';
+const API_URL = 'https://drimsapi.alero.digital/api/v1';
 
 // ========================================
 // UTILITY FUNCTIONS
@@ -50,12 +51,12 @@ const DirectMessages = () => {
   const typingTimeoutRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  
+
   // Get current user data
   const { data: profileData } = useGetSupervisorProfile();
   const queryClient = useQueryClient();
@@ -89,7 +90,7 @@ const DirectMessages = () => {
     setError('');
     try {
       const data = await fetchWithAuth(`${API_URL}/messages/${conversationId}?page=${page}&pageSize=20`);
-      
+
       if (append) {
         // Append older messages to the beginning
         setMessages(prev => [...data.messages, ...prev]);
@@ -97,7 +98,7 @@ const DirectMessages = () => {
         // Replace messages (first page)
         setMessages(data.messages || []);
       }
-      
+
       setHasMore(data.hasMore || false);
       setCurrentPage(page);
     } catch (err) {
@@ -111,7 +112,7 @@ const DirectMessages = () => {
   // Load more messages (older messages)
   const loadMoreMessages = useCallback(async () => {
     if (!selected || !hasMore || loadingMore) return;
-    
+
     const nextPage = currentPage + 1;
     await loadMessages(selected.id, nextPage, true);
   }, [selected, hasMore, loadingMore, currentPage, loadMessages]);
@@ -124,10 +125,10 @@ const DirectMessages = () => {
         method: 'PUT'
       });
       console.log('Successfully marked messages as read');
-      
+
       // Reload messages to get updated readBy arrays
       loadMessages(conversationId);
-      
+
       // Invalidate unread count to update the sidebar badge
       queryClient.invalidateQueries({ queryKey: ['unreadMessageCount'] });
     } catch (err) {
@@ -147,7 +148,7 @@ const DirectMessages = () => {
     // Create a new window for printing
     const printWindow = window.open('', '_blank');
     const printDate = format(new Date(), 'MMMM dd, yyyy');
-    
+
     // Generate HTML content for printing
     const printContent = `
       <!DOCTYPE html>
@@ -272,20 +273,20 @@ const DirectMessages = () => {
           
           <div class="messages">
             ${Object.entries(messages.reduce((acc, msg) => {
-              const date = formatDate(new Date(msg.createdAt));
-              acc[date] = acc[date] || [];
-              acc[date].push(msg);
-              return acc;
-            }, {})).map(([date, msgs]) => `
+      const date = formatDate(new Date(msg.createdAt));
+      acc[date] = acc[date] || [];
+      acc[date].push(msg);
+      return acc;
+    }, {})).map(([date, msgs]) => `
               <div class="date-separator">
                 <span>${date}</span>
               </div>
               ${msgs.map(msg => {
-                const isOwn = msg.senderId !== selected.otherParticipant?.id;
-                const senderName = isOwn ? currentUserName : selected.otherParticipant?.name;
-                const messageTime = format(new Date(msg.createdAt), 'h:mm a');
-                
-                return `
+      const isOwn = msg.senderId !== selected.otherParticipant?.id;
+      const senderName = isOwn ? currentUserName : selected.otherParticipant?.name;
+      const messageTime = format(new Date(msg.createdAt), 'h:mm a');
+
+      return `
                   <div class="message ${isOwn ? 'own' : ''}">
                     <div class="message-header">
                       <strong>${senderName}</strong> - ${messageTime}
@@ -295,7 +296,7 @@ const DirectMessages = () => {
                     </div>
                   </div>
                 `;
-              }).join('')}
+    }).join('')}
             `).join('')}
           </div>
           
@@ -310,7 +311,7 @@ const DirectMessages = () => {
     // Write content to the new window and trigger print
     printWindow.document.write(printContent);
     printWindow.document.close();
-    
+
     // Wait for the content to load, then print
     printWindow.onload = () => {
       setTimeout(() => {
@@ -318,7 +319,7 @@ const DirectMessages = () => {
         printWindow.close();
       }, 250);
     };
-    
+
     // Close dropdown after printing
     setShowDropdown(false);
   };
@@ -328,7 +329,7 @@ const DirectMessages = () => {
   // ========================================
   const handleSocketMessage = useCallback((data) => {
     console.log('Socket message received:', data);
-    
+
     if (data.type === 'new_message') {
       // Only add message if it's for the currently selected conversation
       if (data.conversationId === selected?.id) {
@@ -338,7 +339,7 @@ const DirectMessages = () => {
           if (messageExists) return prev;
           return [...prev, data.message];
         });
-        
+
         // Auto-mark new message as read since user is actively viewing this conversation
         setTimeout(() => {
           markMessagesAsRead(data.conversationId);
@@ -346,7 +347,7 @@ const DirectMessages = () => {
       }
       // Always reload conversations to update last message
       loadConversations();
-      
+
       // If this message is for a different conversation, invalidate unread count
       if (data.conversationId !== selected?.id) {
         queryClient.invalidateQueries({ queryKey: ['unreadMessageCount'] });
@@ -379,7 +380,7 @@ const DirectMessages = () => {
 
   const handleUserStatusChange = useCallback((data) => {
     console.log('User status change:', data);
-    
+
     if (data.onlineUsers) {
       // Handle bulk online users update
       setOnlineUsers(new Set(data.onlineUsers));
@@ -439,20 +440,20 @@ const DirectMessages = () => {
     if (!message.trim() || !selected) return;
     setSending(true);
     setError('');
-    
+
     // Stop typing indicator
     if (isTyping) {
       stopTyping(selected.id);
       setIsTyping(false);
     }
-    
+
     try {
       const res = await fetchWithAuth(`${API_URL}/messages/${selected.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: message }),
       });
-      
+
       // Add message to local state immediately for better UX
       setMessages((prev) => [...prev, res.message]);
       setMessage('');
@@ -467,18 +468,18 @@ const DirectMessages = () => {
   // Handle typing in message input
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
-    
+
     if (selected && e.target.value.trim()) {
       if (!isTyping) {
         setIsTyping(true);
         startTyping(selected.id);
       }
-      
+
       // Reset typing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
-      
+
       typingTimeoutRef.current = setTimeout(() => {
         setIsTyping(false);
         stopTyping(selected.id);
@@ -508,7 +509,7 @@ const DirectMessages = () => {
       loadMessages(selected.id, 1, false);
       markMessagesAsRead(selected.id);
       joinConversation(selected.id);
-      
+
       return () => {
         leaveConversation(selected.id);
       };
@@ -579,9 +580,9 @@ const DirectMessages = () => {
   const parseMessageWithLinks = (text) => {
     // URL regex pattern to detect various URL formats
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|[^\s]+\.[a-z]{2,}(?:\/[^\s]*)?)/gi;
-    
+
     const parts = text.split(urlRegex);
-    
+
     return parts.map((part, index) => {
       if (urlRegex.test(part)) {
         // Ensure the URL has a protocol
@@ -589,7 +590,7 @@ const DirectMessages = () => {
         if (!part.startsWith('http://') && !part.startsWith('https://')) {
           url = 'https://' + part;
         }
-        
+
         return (
           <a
             key={index}
@@ -621,13 +622,13 @@ const DirectMessages = () => {
     if (!message.readBy || message.readBy.length === 0) {
       return 'sent';
     }
-    
+
     // Check if anyone OTHER than the sender has read the message
     const otherParticipantId = selected?.otherParticipant?.id;
     if (otherParticipantId && message.readBy.includes(otherParticipantId)) {
       return 'read';
     }
-    
+
     return 'sent';
   };
 
@@ -639,7 +640,7 @@ const DirectMessages = () => {
       console.log('Creating conversation with student:', student);
       console.log('Student ID being sent:', student.id);
       console.log('Current user ID:', currentUserId);
-      
+
       const res = await fetch(`${API_URL}/messages/conversations`, {
         method: 'POST',
         headers: {
@@ -648,11 +649,11 @@ const DirectMessages = () => {
         },
         body: JSON.stringify({ participantId: student.id })
       });
-      
+
       console.log('Response status:', res.status);
       const data = await res.json();
       console.log('Response data:', data);
-      
+
       if (!res.ok) throw new Error(data.error || 'Failed to start conversation');
       setIsModalOpen(false);
       await loadConversations();
@@ -690,12 +691,12 @@ const DirectMessages = () => {
   const getTypingIndicator = () => {
     const typingUsersList = Array.from(typingUsers.keys());
     if (typingUsersList.length === 0) return null;
-    
+
     if (typingUsersList.length === 1) {
       const userName = selected?.otherParticipant?.name || 'Someone';
       return `${userName} is typing...`;
     }
-    
+
     return 'Multiple people are typing...';
   };
 
@@ -708,7 +709,7 @@ const DirectMessages = () => {
           MAIN CONTAINER
           ======================================== */}
       <div className="h-full max-w-7xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden flex">
-        
+
         {/* ========================================
             LEFT SIDEBAR - CONVERSATIONS LIST
             ======================================== */}
@@ -727,7 +728,7 @@ const DirectMessages = () => {
               />
             </div>
           </div>
-          
+
           {/* New Message Button */}
           <div className="p-4 border-b border-gray-200">
             <button
@@ -750,9 +751,8 @@ const DirectMessages = () => {
               filteredConversations.map((c) => (
                 <div
                   key={c.id}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-100 transition-colors ${
-                    selected?.id === c.id ? 'bg-blue-50 border-r-2 border-blue-500' : ''
-                  }`}
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-100 transition-colors ${selected?.id === c.id ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                    }`}
                   onClick={() => setSelected(c)}
                 >
                   {/* Avatar */}
@@ -761,11 +761,10 @@ const DirectMessages = () => {
                       {c.otherParticipant?.name?.[0] || '?'}
                     </div>
                     {/* Online status indicator */}
-                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
-                      isUserOnline(c.otherParticipant?.id) ? 'bg-green-500' : 'bg-gray-400'
-                    }`}></div>
+                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${isUserOnline(c.otherParticipant?.id) ? 'bg-green-500' : 'bg-gray-400'
+                      }`}></div>
                   </div>
-                  
+
                   {/* Conversation Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -778,7 +777,7 @@ const DirectMessages = () => {
                       {c.lastMessage?.text || 'No messages yet'}
                     </div>
                   </div>
-                  
+
                   {/* Timestamp */}
                   <div className="text-xs text-gray-400">
                     {c.lastMessage?.createdAt ? format(new Date(c.lastMessage.createdAt), 'MMM dd') : ''}
@@ -803,9 +802,8 @@ const DirectMessages = () => {
                       {selected.otherParticipant?.name?.[0] || '?'}
                     </div>
                     {/* Online status indicator */}
-                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
-                      isUserOnline(selected.otherParticipant?.id) ? 'bg-green-500' : 'bg-gray-400'
-                    }`}></div>
+                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${isUserOnline(selected.otherParticipant?.id) ? 'bg-green-500' : 'bg-gray-400'
+                      }`}></div>
                   </div>
                   <div>
                     <div className="font-semibold text-gray-900">{selected.otherParticipant?.name}</div>
@@ -822,14 +820,14 @@ const DirectMessages = () => {
                 <div className="text-gray-500">Select a conversation</div>
               )}
             </div>
-            
+
             <div className="flex items-center gap-2">
               <div className="text-xs text-gray-500">
                 Last login: {format(new Date(), 'dd-MM-yyyy hh:mm a')}
               </div>
               <div className="flex items-center gap-1">
                 <div className="relative" ref={dropdownRef}>
-                  <button 
+                  <button
                     className="p-2 text-gray-400 hover:text-gray-600 rounded"
                     onClick={() => setShowDropdown(!showDropdown)}
                   >
@@ -847,7 +845,7 @@ const DirectMessages = () => {
                     </div>
                   )}
                 </div>
-                <button 
+                <button
                   className="p-2 text-gray-400 hover:text-gray-600 rounded"
                   onClick={() => {
                     setSelected(null);
@@ -887,7 +885,7 @@ const DirectMessages = () => {
                     </button>
                   </div>
                 )}
-                
+
                 {Object.entries(groupedMessages).map(([date, msgs]) => (
                   <div key={date}>
                     {/* Date Separator */}
@@ -898,29 +896,28 @@ const DirectMessages = () => {
                       </span>
                       <div className="flex-1 border-t border-gray-300"></div>
                     </div>
-                    
+
                     {/* Messages */}
                     {msgs.map((msg) => (
                       <div
-                        key={msg.id}    
+                        key={msg.id}
                         className="flex gap-3 mb-4 justify-start"
                       >
                         {/* Avatar */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0 ${
-                          msg.senderId === selected.otherParticipant?.id ? 'bg-orange-500' : 'bg-blue-500'
-                        }`}>
-                          {msg.senderId === selected.otherParticipant?.id 
-                            ? selected.otherParticipant?.name?.[0] || '?' 
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0 ${msg.senderId === selected.otherParticipant?.id ? 'bg-orange-500' : 'bg-blue-500'
+                          }`}>
+                          {msg.senderId === selected.otherParticipant?.id
+                            ? selected.otherParticipant?.name?.[0] || '?'
                             : currentUserName?.[0] || 'Y'
                           }
                         </div>
-                        
+
                         <div className="flex flex-col max-w-[70%] min-w-0">
                           {/* Header: Name and Time */}
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium text-sm text-gray-900">
-                              {msg.senderId === selected.otherParticipant?.id 
-                                ? selected.otherParticipant?.name 
+                              {msg.senderId === selected.otherParticipant?.id
+                                ? selected.otherParticipant?.name
                                 : `${currentUserName} (you)`
                               }
                             </span>
@@ -928,20 +925,19 @@ const DirectMessages = () => {
                               {format(new Date(msg.createdAt), 'h:mm a')}
                             </span>
                           </div>
-                          
+
                           {/* Message Content */}
                           <div
-                            className={`px-4 py-3 rounded-lg shadow-sm ${
-                              msg.senderId === selected.otherParticipant?.id
+                            className={`px-4 py-3 rounded-lg shadow-sm ${msg.senderId === selected.otherParticipant?.id
                                 ? 'bg-white text-gray-900 border border-gray-200'
                                 : 'bg-blue-50 text-gray-900 border border-blue-200'
-                            }`}
+                              }`}
                           >
                             <div className="whitespace-pre-wrap text-sm">
                               {parseMessageWithLinks(msg.text)}
                             </div>
                           </div>
-                          
+
                           {/* Read Receipts */}
                           {msg.senderId !== selected.otherParticipant?.id && (
                             <div className="text-xs text-gray-400 mt-1">
@@ -957,7 +953,7 @@ const DirectMessages = () => {
                     ))}
                   </div>
                 ))}
-                
+
                 {/* Typing Indicator */}
                 {getTypingIndicator() && (
                   <div className="flex gap-3 mb-4">
@@ -971,7 +967,7 @@ const DirectMessages = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {/* Scroll anchor */}
                 <div ref={messagesEndRef} className="h-4" />
               </div>
@@ -1018,7 +1014,7 @@ const DirectMessages = () => {
                   <FiAlignLeft className="w-4 h-4" />
                 </button>
               </div>
-              
+
               {/* Message Input */}
               <div className="flex items-end gap-2">
                 <textarea
@@ -1042,7 +1038,7 @@ const DirectMessages = () => {
                   <FiSend className="w-5 h-5" />
                 </button>
               </div>
-              
+
               {error && <div className="text-red-500 text-xs mt-2">{error}</div>}
             </div>
           )}
@@ -1065,7 +1061,7 @@ const DirectMessages = () => {
                   <FiX className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <input
                   type="text"
@@ -1074,7 +1070,7 @@ const DirectMessages = () => {
                   onChange={e => setSearch(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                
+
                 <div className="max-h-64 overflow-y-auto">
                   {loading ? (
                     <div className="text-center py-6 text-gray-500">Loading...</div>
@@ -1095,9 +1091,8 @@ const DirectMessages = () => {
                               {s.name[0]}
                             </div>
                             {/* Online status indicator */}
-                            <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
-                              isUserOnline(s.id) ? 'bg-green-500' : 'bg-gray-400'
-                            }`}></div>
+                            <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${isUserOnline(s.id) ? 'bg-green-500' : 'bg-gray-400'
+                              }`}></div>
                           </div>
                           <div>
                             <div className="font-medium text-sm text-gray-900">{s.name}</div>
