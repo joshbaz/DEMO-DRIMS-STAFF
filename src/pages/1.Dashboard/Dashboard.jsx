@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { 
-  useGetDashboardStats, 
-  useGetSupervisorProfile, 
-  useGetRecentMessages, 
+import {
+  useGetDashboardStats,
+  useGetSupervisorProfile,
+  useGetRecentMessages,
   useGetAssignedStudents,
-  useGetStatusStatistics 
+  useGetStatusStatistics
 } from "../../store/tanstackStore/services/queries";
 import DashboardStats from "./DashboardStats";
 import DashboardDirectMessages from "./DashboardDirectMessages";
@@ -19,7 +19,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedStatusCategory, setSelectedStatusCategory] = useState('main');
-  
+
   const { data: profileData, isLoading: profileLoading } = useGetSupervisorProfile();
   const { data: statsData, isLoading: statsLoading } = useGetDashboardStats();
   const { data: messagesData, isLoading: messagesLoading } = useGetRecentMessages();
@@ -29,12 +29,12 @@ const Dashboard = () => {
   // Transform messages data
   const messages = useMemo(() => {
     if (!messagesData?.conversations) return [];
-    
+
     return messagesData.conversations.slice(0, 3).map((conversation, index) => {
       const lastMessage = conversation.lastMessage;
       // Use the otherParticipant object that the API already provides
       const otherParticipant = conversation.otherParticipant;
-      
+
       // Generate initials from name
       const getInitials = (name) => {
         if (!name) return "?";
@@ -55,16 +55,16 @@ const Dashboard = () => {
       return {
         sender: otherParticipant?.name || "Unknown",
         initials: getInitials(otherParticipant?.name),
-        message: lastMessage?.text ? 
+        message: lastMessage?.text ?
           (lastMessage.text.length > 50 ? lastMessage.text.substring(0, 50) + "..." : lastMessage.text) :
           "No message preview",
-        time: lastMessage?.createdAt ? 
-          new Date(lastMessage.createdAt).toLocaleTimeString('en-US', { 
-            hour12: true, 
-            hour: '2-digit', 
+        time: lastMessage?.createdAt ?
+          new Date(lastMessage.createdAt).toLocaleTimeString('en-US', {
+            hour12: true,
+            hour: '2-digit',
             minute: '2-digit',
             second: '2-digit'
-          }) : 
+          }) :
           "N/A",
         color: colors[index % colors.length]
       };
@@ -77,26 +77,26 @@ const Dashboard = () => {
       // Fallback to stats data if status statistics aren't available
       if (statsData?.stats && selectedStatusCategory === 'main') {
         return [
-          { 
-            value: parseInt(statsData.stats.normalProgress) || 0, 
-            color: '#14B8A6', 
-            label: 'Normal Progress', 
-            border: '#0F766E', 
-            bg: '#ccfbf1' 
+          {
+            value: parseInt(statsData.stats.normalProgress) || 0,
+            color: '#14B8A6',
+            label: 'Normal Progress',
+            border: '#0F766E',
+            bg: '#ccfbf1'
           },
-          { 
-            value: parseInt(statsData.stats.workshop) || 0, 
-            color: '#B45309', 
-            label: 'Workshop', 
-            border: '#b45309', 
-            bg: '#fffbeb' 
+          {
+            value: parseInt(statsData.stats.workshop) || 0,
+            color: '#B45309',
+            label: 'Workshop',
+            border: '#b45309',
+            bg: '#fffbeb'
           },
-          { 
-            value: parseInt(statsData.stats.underExamination) || 0, 
-            color: '#0369A1', 
-            label: 'Under Examination', 
-            border: '#0369A1', 
-            bg: '#f0f9ff' 
+          {
+            value: parseInt(statsData.stats.underExamination) || 0,
+            color: '#0369A1',
+            label: 'Under Examination',
+            border: '#0369A1',
+            bg: '#f0f9ff'
           },
         ];
       }
@@ -115,21 +115,21 @@ const Dashboard = () => {
   // Transform recently added students data
   const recentlyAddedStudents = useMemo(() => {
     if (!studentsData?.students) return [];
-    
+
     // Sort by creation date and take the most recent 6
     return studentsData.students
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 6)
       .map(student => ({
         id: student.id,
-        name: `${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Unknown Student',
+        name: student.fullName || `${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Unknown Student',
         campus: student.campus?.name || 'Unknown Campus',
         category: student.programLevel || 'Unknown Program',
         status: student.statuses?.[0]?.definition?.name || 'No Status'
       }));
   }, [studentsData]);
 
-  
+
   const statValues = useMemo(() => ({
     assignedStudentsCount: parseInt(statsData?.stats?.assignedStudentsCount) || 0,
     workshopCount: parseInt(statsData?.stats?.workshop) || 0,
@@ -167,8 +167,8 @@ const Dashboard = () => {
       <div className="flex items-center justify-between p-6 pb-2">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <div className="text-xs text-gray-500">
-          Last login : {profileData?.supervisor?.loggedInAt ? 
-            new Date(profileData.supervisor.loggedInAt).toLocaleDateString() + ' ' + 
+          Last login : {profileData?.supervisor?.loggedInAt ?
+            new Date(profileData.supervisor.loggedInAt).toLocaleDateString() + ' ' +
             new Date(profileData.supervisor.loggedInAt).toLocaleTimeString() :
             new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
           }
@@ -180,13 +180,13 @@ const Dashboard = () => {
       </div>
       {/* Direct Messages & Status Report */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 mb-6">
-        <DashboardDirectMessages 
-          messages={messages} 
+        <DashboardDirectMessages
+          messages={messages}
           isLoading={messagesLoading}
           onViewMore={handleViewMoreMessages}
         />
-        <DashboardStatusReportChat 
-          chartData={statusChartData} 
+        <DashboardStatusReportChat
+          chartData={statusChartData}
           statusType={selectedStatusCategory}
           onStatusTypeChange={setSelectedStatusCategory}
           isLoading={statusStatsLoading}
@@ -194,7 +194,7 @@ const Dashboard = () => {
       </div>
       {/* Recently Added Table Section */}
       <div className="px-6 mb-6">
-        <DashboardRecentlyAddedTable 
+        <DashboardRecentlyAddedTable
           data={recentlyAddedStudents}
           isLoading={studentsLoading}
           onViewMore={handleViewMoreStudents}

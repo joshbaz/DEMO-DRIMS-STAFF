@@ -5,10 +5,11 @@ import { format, isToday, isYesterday } from 'date-fns';
 import { FiSend, FiSearch, FiBold, FiItalic, FiUnderline, FiList, FiAlignLeft, FiX, FiMoreVertical, FiPrinter } from 'react-icons/fi';
 import { useGetSupervisorProfile } from '../../store/tanstackStore/services/queries';
 import { Icon } from '@iconify/react';
+import { BASE_API_URL } from '../../utils/apiRequestUrl';
 
 // const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 // const API_URL = import.meta.env.VITE_API_URL || 'https://drimsapi.umi.ac.ug/api/v1';
-const API_URL = 'https://drimsapi.alero.digital/api/v1';
+const API_URL = BASE_API_URL;
 
 // ========================================
 // UTILITY FUNCTIONS
@@ -929,8 +930,8 @@ const DirectMessages = () => {
                           {/* Message Content */}
                           <div
                             className={`px-4 py-3 rounded-lg shadow-sm ${msg.senderId === selected.otherParticipant?.id
-                                ? 'bg-white text-gray-900 border border-gray-200'
-                                : 'bg-blue-50 text-gray-900 border border-blue-200'
+                              ? 'bg-white text-gray-900 border border-gray-200'
+                              : 'bg-blue-50 text-gray-900 border border-blue-200'
                               }`}
                           >
                             <div className="whitespace-pre-wrap text-sm">

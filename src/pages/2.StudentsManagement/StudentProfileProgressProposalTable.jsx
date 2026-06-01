@@ -55,9 +55,7 @@ console.log('proposals',proposals);
     setIsStatusDrawerOpen(true);
   }, [setSelectedStatus, setIsStatusDrawerOpen]);
 
-  const handleSubmitProposal = useCallback(() => {
-    navigate(`/students/submit-proposal/${studentId}`);
-  }, [navigate, studentId]);
+
 
   const handleFilterChange = useCallback((e) => {
     const value = e.target.value;
@@ -267,9 +265,6 @@ console.log('proposals',proposals);
     return (
       <div className="p-8 text-center">
         <p className="text-gray-500 mb-3">Proposal Not Submitted</p>
-        <button onClick={handleSubmitProposal} className="px-4 py-2 bg-[#23388F] text-white text-sm font-medium rounded-lg hover:bg-blue-700">
-          Submit Proposal
-        </button>
       </div>
     );
   }
@@ -298,19 +293,14 @@ console.log('proposals',proposals);
             </option>
           ))}
         </select>
-        {/** resubmit proposal button */}
+        {/** resubmit proposal message */}
         <div className="flex items-center">
           {hasFailedProposalReviewFinished && (
-            <button 
-            onClick={handleSubmitProposal} 
-            className={`px-4 py-2 ${hasFailedProposalReviewFinished ? 'bg-[#DC2626] hover:bg-red-700' : 'bg-[#23388F] hover:bg-blue-700'} text-white text-sm font-medium rounded-lg flex items-center gap-2`}
-            disabled={!hasFailedProposalReviewFinished && proposals.length > 0}
-          >
-            <Icon icon="material-symbols:add" width="18" height="18" />
-            {hasFailedProposalReviewFinished ? 'Resubmit Proposal (Required)' : 'Resubmit Proposal'}
-          </button>
+            <span className="px-4 py-2 bg-[#FEE2E2] text-[#DC2626] text-sm font-medium rounded-lg flex items-center gap-2">
+              <Icon icon="tdesign:info-circle-filled" width="18" height="18" />
+              Student must resubmit proposal
+            </span>
           )}
-          
         </div>
 
         </div>
