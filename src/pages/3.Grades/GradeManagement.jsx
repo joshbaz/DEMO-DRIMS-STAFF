@@ -32,12 +32,9 @@ const GradeManagement = () => {
     return (proposalsData?.proposals || []).filter(
       (proposal) =>
         activeTab === "Proposal Grading" &&
-        (proposal?.student?.firstName
+        (proposal?.student?.fullName
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-          proposal?.student?.lastName
-            ?.toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
           proposal?.student?.email
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase()))

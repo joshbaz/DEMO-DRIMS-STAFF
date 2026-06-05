@@ -58,7 +58,7 @@ const GradeManagementProposalTable = ({
         header: "Student",
         cell: (info) => (
           <div className="capitalize">
-            {`${info.getValue().firstName} ${info.getValue().lastName}`}
+            {info.getValue().fullName}
             {/* <div className="text-xs text-gray-500">{info.getValue().email}</div> */}
           </div>
         ),
