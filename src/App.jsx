@@ -22,6 +22,8 @@ import GradeManagement from './pages/3.Grades/GradeManagement';
 // PWA Component
 import PWAInstaller from './components/PWAInstaller';
 
+import SupportChatWidget from './components/SupportChatWidget';
+
 // Global Document Notification Handler
 const DocumentNotificationHandler = () => {
   const handleDocumentNotification = useCallback((data) => {
@@ -123,6 +125,7 @@ function App() {
       {/* PWA Installer moved outside AuthProvider so it shows on login page */}
       <PWAInstaller />
       <DocumentNotificationHandler />
+      <SupportChatWidget />
     </BrowserRouter>
   );
 }
