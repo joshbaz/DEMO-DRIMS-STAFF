@@ -36,6 +36,7 @@ export const useGetSupervisorProfile = () => {
   return useQuery({
     queryKey: ['supervisorProfile'],
     queryFn: getSupervisorProfile,
+    enabled: !!localStorage.getItem('umi_auth_token'),
   });
 };
 
