@@ -238,3 +238,50 @@ export const uploadReviewedDocumentService = async (documentId, formData) => {
         errorHandling(error);
     }
 }; 
+
+/* ********** APPOINTMENTS ********** */
+
+export const getAvailabilitiesService = async () => {
+    try {
+        const response = await apiRequest.get("/supervisor/appointments/availability");
+        return response.data;
+    } catch (error) {
+        errorHandling(error);
+    }
+};
+
+export const addAvailabilityService = async (data) => {
+    try {
+        const response = await apiRequest.post("/supervisor/appointments/availability", data);
+        return response.data;
+    } catch (error) {
+        errorHandling(error);
+    }
+};
+
+export const deleteAvailabilityService = async (id) => {
+    try {
+        const response = await apiRequest.delete(`/supervisor/appointments/availability/${id}`);
+        return response.data;
+    } catch (error) {
+        errorHandling(error);
+    }
+};
+
+export const getAppointmentsService = async () => {
+    try {
+        const response = await apiRequest.get("/supervisor/appointments");
+        return response.data;
+    } catch (error) {
+        errorHandling(error);
+    }
+};
+
+export const updateAppointmentService = async ({ id, ...data }) => {
+    try {
+        const response = await apiRequest.put(`/supervisor/appointments/${id}/status`, data);
+        return response.data;
+    } catch (error) {
+        errorHandling(error);
+    }
+};

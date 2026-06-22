@@ -21,7 +21,12 @@ import {
   getStatusStatistics,
   getStudentDocumentsService,
   downloadStudentDocumentService,
-  uploadReviewedDocumentService
+  uploadReviewedDocumentService,
+  getAvailabilitiesService,
+  addAvailabilityService,
+  deleteAvailabilityService,
+  getAppointmentsService,
+  updateAppointmentService
 } from "./api";
 
 /* ********** AUTH QUERIES ********** */
@@ -217,3 +222,51 @@ export const useUploadReviewedDocument = () => {
     },
   });
 }; 
+
+/* ********** APPOINTMENTS QUERIES ********** */
+
+export const useGetAvailabilities = () => {
+  return useQuery({
+    queryKey: ['availabilities'],
+    queryFn: getAvailabilitiesService,
+  });
+};
+
+export const useAddAvailability = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addAvailabilityService,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['availabilities'] });
+    },
+  });
+};
+
+export const useDeleteAvailability = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAvailabilityService,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['availabilities'] });
+      queryClient.invalidateQueries({ queryKey: ['appointments'] });
+    },
+  });
+};
+
+export const useGetAppointments = () => {
+  return useQuery({
+    queryKey: ['appointments'],
+    queryFn: getAppointmentsService,
+  });
+};
+
+export const useUpdateAppointment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateAppointmentService,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['availabilities'] });
+    },
+  });
+};

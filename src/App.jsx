@@ -13,6 +13,7 @@ import DirectMessages from './pages/4.DirectMessages/DirectMessages';
 import Notifications from './pages/5.Notifications/Notifications';
 import Settings from './pages/6.Settings/Settings';
 import Documents from './pages/7.Documents/Documents';
+import Appointments from './pages/8.Appointments/Appointments';
 
 // Layout
 import Layout from './components/Layout/Layout';
@@ -105,6 +106,7 @@ function AppRoutes() {
         <Route path="students/profile/:id" element={<StudentProfile />} />
         <Route path="grades" element={<GradeManagement />} />
         <Route path="documents" element={<Documents />} />
+        <Route path="appointments" element={<Appointments />} />
         <Route path="direct-messages" element={<DirectMessages />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="settings" element={<Settings />} />
