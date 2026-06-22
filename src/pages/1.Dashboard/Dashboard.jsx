@@ -119,14 +119,7 @@ const Dashboard = () => {
     // Sort by creation date and take the most recent 6
     return studentsData.students
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 6)
-      .map(student => ({
-        id: student.id,
-        name: student.fullName || `${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Unknown Student',
-        campus: student.campus?.name || 'Unknown Campus',
-        category: student.programLevel || 'Unknown Program',
-        status: student.statuses?.[0]?.definition?.name || 'No Status'
-      }));
+      .slice(0, 6);
   }, [studentsData]);
 
 

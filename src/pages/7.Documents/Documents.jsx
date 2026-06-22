@@ -6,6 +6,7 @@ import DocumentReviewModal from './DocumentReviewModal';
 const Documents = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [studentDocuments, setStudentDocuments] = useState([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const { data: studentsData, isLoading: isLoadingStudents } = useGetAssignedStudents();
@@ -16,8 +17,9 @@ const Documents = () => {
     setSelectedDocument(null);
   };
 
-  const handleDocumentSelect = (document) => {
+  const handleDocumentSelect = (document, allDocs = []) => {
     setSelectedDocument(document);
+    setStudentDocuments(allDocs);
     setIsReviewModalOpen(true);
   };
 
@@ -76,21 +78,20 @@ const Documents = () => {
                     <button
                       key={student.id}
                       onClick={() => handleStudentSelect(student)}
-                      className={`w-full text-left p-3 rounded-md transition-colors ${
-                        selectedStudent?.id === student.id
+                      className={`w-full text-left p-3 rounded-md transition-colors cursor-pointer ${selectedStudent?.id === student.id
                           ? 'bg-blue-50 border border-blue-200'
                           : 'hover:bg-gray-50 border border-transparent'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                           <span className="text-sm font-medium text-blue-600">
-                            {student.firstName?.[0]}{student.lastName?.[0]}
+                            {student.fullName?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
-                            {student.firstName} {student.lastName}
+                            {student.fullName}
                           </p>
                           <p className="text-xs text-gray-500 truncate">
                             {student.registrationNumber}
@@ -144,6 +145,7 @@ const Documents = () => {
           isOpen={isReviewModalOpen}
           onClose={handleCloseReviewModal}
           document={selectedDocument}
+          allDocuments={studentDocuments}
           student={selectedStudent}
         />
       )}

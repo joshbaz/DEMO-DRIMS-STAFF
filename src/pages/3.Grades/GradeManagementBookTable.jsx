@@ -97,10 +97,6 @@ const GradeManagementBookTable = ({
           );
         },
       }),
-      columnHelper.accessor("averageExamMark", {
-        header: "Mark Range",
-        cell: (info) => info.getValue() ? `${info.getValue()}%` : "-",
-      }),
       columnHelper.accessor("bookGrade", {
         header: "Category",
         cell: (info) => {

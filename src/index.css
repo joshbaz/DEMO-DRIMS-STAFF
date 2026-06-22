@@ -52,7 +52,7 @@ html, body, #root {
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", "Roboto", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -188,6 +188,7 @@ button:focus-visible {
 }
 
 @theme {
+  --font-sans: "Inter", "Roboto", system-ui, sans-serif;
   --color-accent1-100: #ECF6FB;
   --color-accent1-200: #D9EDF7;
   --color-accent1-300: #C5E5F3;
