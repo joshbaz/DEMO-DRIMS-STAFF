@@ -13,8 +13,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'safari-pinned-tab.svg'],
       manifest: {
-        name: 'UMI Supervisor Portal',
-        short_name: 'UMI Supervisor',
+        name: 'DRIMS STAFF PORTAL',
+        short_name: 'DRIMS STAFF',
         description: 'University Management Information System - Supervisor Portal',
         theme_color: '#2563eb',
         background_color: '#ffffff',

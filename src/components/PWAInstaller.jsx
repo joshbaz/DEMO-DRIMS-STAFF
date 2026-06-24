@@ -157,7 +157,7 @@ const PWAInstaller = () => {
           </div>
           <div>
             <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              Install UMI Supervisor Portal
+              Install DRIMS STAFF PORTAL
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Install our app for quick access and offline functionality
