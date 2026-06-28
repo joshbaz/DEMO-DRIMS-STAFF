@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGetAppointments, useUpdateAppointment } from '../../store/tanstackStore/services/queries';
-import { Calendar, Clock, User, MessageSquare, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Clock, User, MessageSquare, CheckCircle, XCircle, MapPin, Video, FileText } from 'lucide-react';
+import { format12HourTime } from '../../utils/formatTime';
 
 const UpcomingAppointments = () => {
   const { data: appointments, isLoading } = useGetAppointments();
@@ -8,6 +9,9 @@ const UpcomingAppointments = () => {
 
   const [feedbackModal, setFeedbackModal] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
+  
+  const [cancelModal, setCancelModal] = useState(null);
+  const [cancelReason, setCancelReason] = useState('');
 
   const handleStatusChange = (id, newStatus) => {
     updateAppointment.mutate({ id, status: newStatus });
@@ -25,6 +29,22 @@ const UpcomingAppointments = () => {
       onSuccess: () => {
         setFeedbackModal(null);
         setFeedbackText('');
+      }
+    });
+  };
+
+  const submitCancel = (e) => {
+    e.preventDefault();
+    if (!cancelReason.trim() || !cancelModal) return;
+
+    updateAppointment.mutate({
+      id: cancelModal,
+      feedback: `Cancellation Reason: ${cancelReason}`,
+      status: 'CANCELLED'
+    }, {
+      onSuccess: () => {
+        setCancelModal(null);
+        setCancelReason('');
       }
     });
   };
@@ -67,8 +87,26 @@ const UpcomingAppointments = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Clock size={16} className="text-blue-500" />
-                  {apt.startTime} - {apt.endTime}
+                  {format12HourTime(apt.startTime)} - {format12HourTime(apt.endTime)}
                 </div>
+
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  {apt.availability?.meetingType === 'PHYSICAL' ? (
+                    <><MapPin size={16} className="text-blue-500" /> <span>{apt.availability?.location || 'Physical'}</span></>
+                  ) : (
+                    <a href={apt.availability?.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-md text-xs font-medium transition-colors shadow-sm w-fit">
+                      <Video size={14} /> 
+                      Join Virtual Meeting
+                    </a>
+                  )}
+                </div>
+
+                {apt.availability?.purpose && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <FileText size={16} className="text-gray-400" />
+                    <span className="italic">{apt.availability.purpose}</span>
+                  </div>
+                )}
 
                 {apt.notes && (
                   <div className="mt-2 text-sm bg-gray-50 p-3 rounded-md border border-gray-100">
@@ -98,6 +136,12 @@ const UpcomingAppointments = () => {
                     className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded hover:bg-gray-300 transition-colors"
                   >
                     <XCircle size={16} /> No Show
+                  </button>
+                  <button
+                    onClick={() => setCancelModal(apt.id)}
+                    className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-red-50 text-red-600 border border-red-200 text-sm font-medium rounded hover:bg-red-100 transition-colors"
+                  >
+                    <XCircle size={16} /> Cancel
                   </button>
                 </div>
               )}
@@ -146,6 +190,51 @@ const UpcomingAppointments = () => {
                   className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium text-sm transition-colors"
                 >
                   {updateAppointment.isPending ? 'Saving...' : 'Mark Completed'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Modal */}
+      {cancelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+              <XCircle size={20} className="text-red-500" />
+              Cancel Appointment
+            </h3>
+            <form onSubmit={submitCancel}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Please provide a reason for cancelling this appointment (required)
+                </label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-red-500 min-h-[120px]"
+                  placeholder="I have an urgent meeting at this time..."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  required
+                ></textarea>
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCancelModal(null);
+                    setCancelReason('');
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md font-medium text-sm transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  disabled={!cancelReason.trim() || updateAppointment.isPending}
+                  className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {updateAppointment.isPending ? 'Cancelling...' : 'Confirm Cancellation'}
                 </button>
               </div>
             </form>

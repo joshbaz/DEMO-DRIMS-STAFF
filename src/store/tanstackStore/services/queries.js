@@ -26,7 +26,8 @@ import {
   addAvailabilityService,
   deleteAvailabilityService,
   getAppointmentsService,
-  updateAppointmentService
+  updateAppointmentService,
+  getCampuses
 } from "./api";
 
 /* ********** AUTH QUERIES ********** */
@@ -268,5 +269,12 @@ export const useUpdateAppointment = () => {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
       queryClient.invalidateQueries({ queryKey: ['availabilities'] });
     },
+  });
+};
+export const useGetCampuses = () => {
+  return useQuery({
+    queryKey: ['campuses'],
+    queryFn: getCampuses,
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });
 };

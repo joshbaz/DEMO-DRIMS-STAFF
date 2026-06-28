@@ -259,9 +259,11 @@ export const addAvailabilityService = async (data) => {
     }
 };
 
-export const deleteAvailabilityService = async (id) => {
+export const deleteAvailabilityService = async ({ id, reason }) => {
     try {
-        const response = await apiRequest.delete(`/supervisor/appointments/availability/${id}`);
+        const response = await apiRequest.delete(`/supervisor/appointments/availability/${id}`, {
+            data: { reason }
+        });
         return response.data;
     } catch (error) {
         errorHandling(error);
@@ -280,6 +282,15 @@ export const getAppointmentsService = async () => {
 export const updateAppointmentService = async ({ id, ...data }) => {
     try {
         const response = await apiRequest.put(`/supervisor/appointments/${id}/status`, data);
+        return response.data;
+    } catch (error) {
+        errorHandling(error);
+    }
+}
+
+export const getCampuses = async () => {
+    try {
+        const response = await apiRequest.get("/management/campuses");
         return response.data;
     } catch (error) {
         errorHandling(error);
